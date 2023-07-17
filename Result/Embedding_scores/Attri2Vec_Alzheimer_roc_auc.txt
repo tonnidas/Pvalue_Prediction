@@ -1,0 +1,4 @@
+For data_name: Alzheimer, split: 42, hop: 0 
+           ROC score  AP score
+name                          
+Attri2Vec   0.708333  0.645021

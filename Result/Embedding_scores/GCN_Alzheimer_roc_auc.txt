@@ -1,0 +1,4 @@
+For data_name: Alzheimer, split: 42, hop: 0 
+      ROC score  AP score
+name                     
+GCN    0.885417  0.881221
