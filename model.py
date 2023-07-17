@@ -50,100 +50,45 @@ warnings.filterwarnings('ignore', category=DeprecationWarning)
 
 
 # ----------------------------------------
-# def randomForest_classifier_hyper(X_train, X_test, y_train, y_test):
-    # # Number of trees in random forest
-    # n_estimators = [int(x) for x in np.linspace(start = 10, stop = 1000, num = 100)]
-
-    # # Number of features to consider at every split
-    # max_features = ['auto', 'log2', 'sqrt']
-
-    # # Maximum number of levels in tree
-    # max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
-    # max_depth.append(None)
-
-    # # Minimum number of samples required to split a node
-    # min_samples_split = [2, 5, 10]
-
-    # # Minimum number of samples required at each leaf node
-    # min_samples_leaf = [1, 2, 4]
-
-    # # Method of selecting samples for training each tree
-    # bootstrap = [True, False]
-
-    # # Create the random grid
-    # random_grid = {'n_estimators': n_estimators,
-    #                'max_features': max_features,
-    #                'max_depth': max_depth,
-    #                'min_samples_split': min_samples_split,
-    #                'min_samples_leaf': min_samples_leaf,
-    #                'bootstrap': bootstrap}
-
-    # print('running random forest with hyperparameter')
-
-    # rf = RandomForestClassifier()
-    # rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, n_iter = 20, cv = 5, verbose=2, random_state=42, n_jobs = -1)
-    # rf_random.fit(X_train, y_train)
-
-    # # predict
-    # predicted_labels_train = rf_random.predict(X_train)
-    # predicted_labels_test = rf_random.predict(X_test)
-
-    # print('randomForest with hyperparameter completed')
-    # # summarize result
-    # print('Best Hyperparameters: %s' % rf_random.best_params_)
-
-    # return predicted_labels_test
-# ----------------------------------------
-
-
-# ----------------------------------------
 def linear_regression(X_train, X_test, y_train):
     model = LinearRegression()
     model.fit(X_train, y_train)
-    y_train_pred = model.predict(X_train)
-    y_pred = model.predict(X_test)
-    return y_train_pred, y_pred
+    return model
+    # y_train_pred = model.predict(X_train)
+    # y_pred = model.predict(X_test)
+    # return y_train_pred, y_pred
 # ----------------------------------------
 
 # ----------------------------------------
 def ridge_regression(X_train, X_test, y_train):
     model = Ridge(alpha=1.0)
     model.fit(X_train, y_train)
-    y_train_pred = model.predict(X_train)
-    y_pred = model.predict(X_test)
-    return y_train_pred, y_pred
+    return model
+    # y_train_pred = model.predict(X_train)
+    # y_pred = model.predict(X_test)
+    # return y_train_pred, y_pred
 # ----------------------------------------
 
 # ----------------------------------------
 def svm_regression(X_train, X_test, y_train):
     model = SVR(kernel = 'rbf')
     model.fit(X_train, y_train)
-    y_train_pred = model.predict(X_train)
-    y_pred = model.predict(X_test)
-    return y_train_pred, y_pred
+    return model
+    # y_train_pred = model.predict(X_train)
+    # y_pred = model.predict(X_test)
+    # return y_train_pred, y_pred
 # ----------------------------------------
 
 # ----------------------------------------
 def randomForest_regressor_gridSearch(X_train, X_test, y_train):
 
-    # Number of trees in random forest
-    n_estimators = [50, 100, 150, 200, 500]
-
-    # Number of features to consider at every split
-    max_features = ['auto', 'sqrt']
-
-    # Maximum number of levels in tree
-    max_depth = [10, 20, 50, 70, 100]
+    n_estimators = [50, 100, 150, 200, 500]  # Number of trees in random forest    
+    max_features = ['auto', 'sqrt']          # Number of features to consider at every split
+    max_depth = [10, 20, 50, 70, 100]        # Maximum number of levels in tree
     max_depth.append(None)
-
-    # Minimum number of samples required to split a node
-    min_samples_split = [2, 5, 10]
-
-    # Minimum number of samples required at each leaf node
-    min_samples_leaf = [1, 2, 4]
-
-    # Method of selecting samples for training each tree
-    bootstrap = [True, False]
+    min_samples_split = [2, 5, 10]           # Minimum number of samples required to split a node
+    min_samples_leaf = [1, 2, 4]             # Minimum number of samples required at each leaf node
+    bootstrap = [True, False]                # Method of selecting samples for training each tree
 
     # Create the random grid
     random_grid = {'n_estimators': n_estimators,
@@ -157,36 +102,25 @@ def randomForest_regressor_gridSearch(X_train, X_test, y_train):
     regressor_grid = GridSearchCV(estimator = regressor, param_grid = random_grid, cv = 5, verbose=2, n_jobs = -1)
     regressor_grid.fit(X_train, y_train)
 
-    # regressor = RandomForestRegressor(n_estimators=100, random_state=0)
-    # regressor.fit(X_train, y_train)
+    return regressor_grid
 
-    y_train_pred = regressor_grid.predict(X_train)
-    y_pred = regressor_grid.predict(X_test)
-    y_train_pred = pd.Series(y_train_pred)
-    y_pred = pd.Series(y_pred)
-    return y_train_pred, y_pred
+    # y_train_pred = regressor_grid.predict(X_train)
+    # y_train_pred = pd.Series(y_train_pred)
+    # y_pred = regressor_grid.predict(X_test)
+    # y_pred = pd.Series(y_pred)
+    # return y_train_pred, y_pred
 # ----------------------------------------
 
 # ----------------------------------------
 def randomForest_regressor_randomized(X_train, X_test, y_train):
-    # Number of trees in random forest
-    n_estimators = [int(x) for x in np.linspace(start = 100, stop = 1000, num = 50)]
-
-    # Number of features to consider at every split
-    max_features = ['auto', 'sqrt']
-
-    # Maximum number of levels in tree
-    max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
+    
+    n_estimators = [int(x) for x in np.linspace(start = 100, stop = 1000, num = 50)]  # Number of trees in random forest
+    max_features = ['auto', 'sqrt']                                                   # Number of features to consider at every split
+    max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]                      # Maximum number of levels in tree
     max_depth.append(None)
-
-    # Minimum number of samples required to split a node
-    min_samples_split = [2, 5, 10]
-
-    # Minimum number of samples required at each leaf node
-    min_samples_leaf = [1, 2, 4]
-
-    # Method of selecting samples for training each tree
-    bootstrap = [True, False]
+    min_samples_split = [2, 5, 10]                                                    # Minimum number of samples required to split a node
+    min_samples_leaf = [1, 2, 4]                                                      # Minimum number of samples required at each leaf node
+    bootstrap = [True, False]                                                         # Method of selecting samples for training each tree
 
     # Create the random grid
     random_grid = {'n_estimators': n_estimators,
@@ -200,11 +134,13 @@ def randomForest_regressor_randomized(X_train, X_test, y_train):
     regressor_randomized = RandomizedSearchCV(estimator = regressor, param_distributions = random_grid, n_iter = 20, cv = 5, verbose=2, random_state=42, n_jobs = -1)
     regressor_randomized.fit(X_train, y_train)
 
-    y_train_pred = regressor_randomized.predict(X_train)
-    y_train_pred = pd.Series(y_train_pred)
-    y_pred = regressor_randomized.predict(X_test)
-    y_pred = pd.Series(y_pred)
-    return y_train_pred, y_pred
+    return regressor_randomized
+
+    # y_train_pred = regressor_randomized.predict(X_train)
+    # y_train_pred = pd.Series(y_train_pred)
+    # y_pred = regressor_randomized.predict(X_test)
+    # y_pred = pd.Series(y_pred)
+    # return y_train_pred, y_pred
 # ----------------------------------------
 
 
@@ -236,9 +172,11 @@ def neuralNet_regressor(X_train, X_test, y_train):
     print(NN_model.summary())
     NN_model.load_weights(filepath) # load it
 
-    y_train_pred = NN_model.predict(X_train)
-    y_pred = NN_model.predict(X_test)
-    return y_train_pred, y_pred
+    return NN_model
+
+    # y_train_pred = NN_model.predict(X_train)
+    # y_pred = NN_model.predict(X_test)
+    # return y_train_pred, y_pred
 # ----------------------------------------
 
 # ----------------------------------------
@@ -281,81 +219,49 @@ def neuralNet_regressor_hyper(X_train, X_test, y_train):
     # re-run with best param
     developed_model = create_model(optimizer=params_dict['optimizer'], activation=params_dict['activation'])
     developed_model.fit(X_train, y_train, validation_split=0.2, epochs=params_dict['epochs'], batch_size=params_dict['batch_size'])
+
+    return developed_model
                         
-    y_train_pred = developed_model.predict(X_train)
-    y_pred = developed_model.predict(X_test)
-    return y_train_pred, y_pred
+    # y_train_pred = developed_model.predict(X_train)
+    # y_pred = developed_model.predict(X_test)
+    # return y_train_pred, y_pred
 # ----------------------------------------
 
+
 # ----------------------------------------
-def special_case(featureMatrix, pvalueMatrix, model_name, rand_state, featureMatrix_of_emptyPval, nodeId_emptyPval, case):
-    print('======= Reached special case', case)
+def predict_pval(featureMatrix, pvalueMatrix, model_name, rand_state, featureMatrix_of_emptyPval, nodeId_emptyPval, case):
 
     X_train, X_test, y_train, y_test = train_test_split(featureMatrix, pvalueMatrix, random_state=rand_state, test_size=0.30, shuffle=True)
+    if case == 3: 
+        X_train, y_train = featureMatrix, pvalueMatrix
 
-    if case == 2:
-        print('case 2 =============')
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-        predicted_train_pvals = model.predict(X_train)
-        predicted_test_pvals = model.predict(X_test)
-
-        # predict pvalues of nodes that do not have pvalues and store in excel file
-        predicted_pvalues_of_emptyPval = model.predict(featureMatrix_of_emptyPval)
-        resDf = pd.DataFrame(predicted_pvalues_of_emptyPval, columns = ['Pvals'])
-        resDf['nodeId'] = nodeId_emptyPval # add the nodId column from nodeIds of empty pval
-        f = 'Result/Predicted_pvalues/Predicted_pvals_from_case_2_{}_{}.xlsx'.format('GCN', 'Linear')
-        resDf.to_excel(f) 
-        print(resDf)
-
-        return y_train, predicted_train_pvals, y_test, predicted_test_pvals
-
-    elif case == 3:
-        print('case 3 =============')
-        model = LinearRegression()
-        model.fit(featureMatrix, pvalueMatrix)
-        predicted_train_pvals = model.predict(featureMatrix)
-
-        # predict pvalues of nodes that do not have pvalues and store in excel file
-        predicted_pvalues_of_emptyPval = model.predict(featureMatrix_of_emptyPval)
-        resDf = pd.DataFrame(predicted_pvalues_of_emptyPval, columns = ['Pvals'])
-        resDf['nodeId'] = nodeId_emptyPval # add the nodId column from nodeIds of empty pval
-        print('-------------------------------------------------------------=============================')
-        print(resDf, 'Tonni')
-        f = 'Result/Predicted_pvalues/Predicted_pvals_from_case_3_{}_{}.xlsx'.format('GCN', 'Linear')
-        resDf.to_excel(f) 
-        print(resDf)
-        return pvalueMatrix, predicted_train_pvals, None, None
-
+    # predicted_pvals = [0]
+    if model_name == 'NeuralNet_hyper': model = neuralNet_regressor_hyper(X_train, X_test, y_train)                  # we will use this one mainly
+    elif model_name == 'RandomForest_grid': model = randomForest_regressor_gridSearch(X_train, X_test, y_train)
+    elif model_name == 'RandomForest_randomized': model = randomForest_regressor_randomized(X_train, X_test, y_train)
+    elif model_name == 'NeuralNet': model = neuralNet_regressor(X_train, X_test, y_train)
+    elif model_name == 'Linear': model = linear_regression(X_train, X_test, y_train)
+    elif model_name == 'Ridge': model = ridge_regression(X_train, X_test, y_train)
+    elif model_name == 'SVM': model = svm_regression(X_train, X_test, y_train)
     else:
-        print('There are only case 2 and 3')
+        print('Sorry! The model_name is not right!')
         exit(0)
-# ----------------------------------------
+    
+    if 'RandomForest' in model_name:
+        y_train_pred = pd.Series(model.predict(X_train))
+        y_pred = pd.Series(model.predict(X_test))
 
-# ----------------------------------------
-def predict_pval(featureMatrix, pvalueMatrix, model, rand_state): 
-    print(featureMatrix.shape, pvalueMatrix.shape)
-    X_train, X_test, y_train, y_test = train_test_split(featureMatrix, pvalueMatrix, random_state=rand_state, test_size=0.30, shuffle=True)
+    y_train_pred = model.predict(X_train)
+    y_pred = model.predict(X_test)                              # not need it if case == 3, but won't throw error
+    predicted_train_pvals, predicted_test_pvals = y_train_pred, y_pred
 
-    predicted_pvals = [0]
-    if model == 'RandomForest_grid':
-        predicted_train_pvals, predicted_pvals = randomForest_regressor_gridSearch(X_train, X_test, y_train)
-    elif model == 'RandomForest_randomized':
-        predicted_train_pvals, predicted_pvals = randomForest_regressor_randomized(X_train, X_test, y_train)
-    elif model == 'NeuralNet':
-        predicted_train_pvals, predicted_pvals = neuralNet_regressor(X_train, X_test, y_train)
-    elif model == 'NeuralNet_hyper':
-        predicted_train_pvals, predicted_pvals = neuralNet_regressor_hyper(X_train, X_test, y_train)
-    elif model == 'Linear':
-        predicted_train_pvals, predicted_pvals = linear_regression(X_train, X_test, y_train)
-    elif model == 'Ridge':
-        predicted_train_pvals, predicted_pvals = ridge_regression(X_train, X_test, y_train)
-    elif model == 'SVM':
-        predicted_train_pvals, predicted_pvals = svm_regression(X_train, X_test, y_train)
-    else:
-        print('Sorry! The model name is not right!')
-        exit(0)
+    # predict pvalues of nodes that do not have pvalues and store in excel file
+    predicted_pvalues_of_emptyPval = model.predict(featureMatrix_of_emptyPval)
+    resDf = pd.DataFrame(predicted_pvalues_of_emptyPval, columns = ['Pvals'])
+    resDf['nodeId'] = nodeId_emptyPval # add the nodId column from nodeIds of empty pval
+    f = 'Result/Predicted_pvalues/Predicted_pvals_from_case_{}_{}_{}.xlsx'.format(case, 'GCN', model_name)
+    resDf.to_excel(f) 
+    print(resDf)
 
-    return y_train, predicted_train_pvals, y_test, predicted_pvals, nodeId_train, nodeId_test
-    # return acc, f1_macro, precision_macro, recall_macro, f1_micro, precision_micro, recall_micro, f1_weighted, adj_RI
-# ----------------------------------------
+    return y_train, predicted_train_pvals, y_test, predicted_test_pvals
+    # return 0

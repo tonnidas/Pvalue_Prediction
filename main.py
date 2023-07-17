@@ -6,29 +6,10 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from scipy.sparse import csr_matrix
-from model import predict_pval, special_case
+from model import predict_pval
 from metrics import regression_metrics, regression_metrics_special_case_3
 # ----------------------------------------
 
-
-# ----------------------------------------
-# def construct(embedding, data_name):
-#     if embedding == 'Node2Vec':
-#         print('Did not prepare to execute for Node2Vec yet')
-#         exit(0)    # Branch closed temporarily as Node2Vec embedding performance is not good
-#     else: 
-#         emb_file = 'pickles/generated_embeddings/{}_{}.pickle'.format(embedding, data_name)
-#         pval_file = '../graph-data/Alzheimers_Disease_Graph/Processed/{}_pval.pickle'.format(data_name)
-#         with open(emb_file, 'rb') as handle: featureMatrix = pickle.load(handle)
-#         with open(pval_file, 'rb') as handle: pvalueMatrix = pickle.load(handle)
-#         # pvalueMatrix = pvalueMatrix.todense()
-#         featureMatrix = featureMatrix.to_numpy()
-#         print(featureMatrix)
-#         print('pvalueMatrix.shape', pvalueMatrix.shape)
-#         print(pvalueMatrix)
-
-#     return featureMatrix, pvalueMatrix
-# # ----------------------------------------
 
 # ----------------------------------------
 def construct(embedding, data_name):
@@ -70,50 +51,18 @@ def construct(embedding, data_name):
 # def get_settings(dataset_attributes, dataset_edges, model, predicting_attribute, prediction_type, selected_features):
 def do_category_specific_task_prediction(data_name, model_name, rand_state_for_split, embedding, predicting_speciality):   # predicting_speciality can be 1, 2, 3
     
-    if predicting_speciality == 1:  # Normal prediction
-        # Get features and labels
-        featureMatrix, pvalueMatrix, _, _ = construct(embedding, data_name)
-        print("Featurs and y collected ___________________________ ")
-
-        # Get pval_test and pval_predicted
-        y_train, predicted_train_pvals, y_test, predicted_pvals = predict_pval(featureMatrix, pvalueMatrix, model_name, rand_state_for_split)
-
-        # Get evaluation metric values
-        scores = regression_metrics(y_train, predicted_train_pvals, y_test, predicted_pvals)
-        return scores
+    # Get features, labels, features_of_nodes_with_empty_pval, list_of_nodeids_with_empty_pval
+    featureMatrix, pvalueMatrix, featureMatrix_of_emptyPval, nodeId_emptyPval = construct(embedding, data_name)
+    print("Featurs and y and featureMatrix_of_emptyPval collected ___________________________ ")
+    # Get pval_test and pval_predicted                        
+    y_train, predicted_train_pvals, y_test, predicted_pvals = predict_pval(featureMatrix, pvalueMatrix, model_name, rand_state_for_split, featureMatrix_of_emptyPval, nodeId_emptyPval, predicting_speciality)
     
-    elif predicting_speciality == 2:  # predict only 
-        # Get features and labels
-        featureMatrix, pvalueMatrix, featureMatrix_of_emptyPval, nodeId_emptyPval = construct(embedding, data_name)
-        print("Featurs and y and featureMatrix_of_emptyPval collected ___________________________ ")
+    if predicting_speciality !=2 and predicting_speciality !=3: print('\n Chose predicting_speciality from 2 to 3 \n')
 
-        # Get pval_test and pval_predicted
-        y_train, predicted_train_pvals, y_test, predicted_pvals = special_case(featureMatrix, pvalueMatrix, model_name, rand_state_for_split, featureMatrix_of_emptyPval, nodeId_emptyPval, predicting_speciality)
-        
-        # Get evaluation metric values
-        scores = regression_metrics(y_train, predicted_train_pvals, y_test, predicted_pvals)
-        return scores
-    
-    elif predicting_speciality == 3:
-        # Get features and labels
-        featureMatrix, pvalueMatrix, featureMatrix_of_emptyPval, nodeId_emptyPval = construct(embedding, data_name)
-        print("Featurs and y and featureMatrix_of_emptyPval collected ___________________________ ")
-
-        # Get pval_test and pval_predicted
-        y_train, predicted_train_pvals, y_test, predicted_pvals = special_case(featureMatrix, pvalueMatrix, model_name, rand_state_for_split, featureMatrix_of_emptyPval, nodeId_emptyPval, predicting_speciality)
-        
-        # Get evaluation metric values
-        scores = regression_metrics_special_case_3(y_train, predicted_train_pvals)
-        return scores
-
-    else:
-        print('Chose predicting_speciality from 1 to 3')
-        exit(0)
+    if predicting_speciality == 3: scores = regression_metrics_special_case_3(y_train, predicted_train_pvals)   # Get evaluation metric values
+    scores = regression_metrics(y_train, predicted_train_pvals, y_test, predicted_pvals)
+    return scores
 # ----------------------------------------
-
-
-
-
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -121,24 +70,24 @@ def do_category_specific_task_prediction(data_name, model_name, rand_state_for_s
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset')
+parser.add_argument('--emb')
+parser.add_argument('--modelName')
+parser.add_argument('--case')
 args = parser.parse_args()
-data_name = args.dataset   # 'Alzheimer'
+data_name = args.dataset               # 'Alzheimer'
+embedding = args.emb                   # 'GCN' or 'Attri2Vec' or 'GraphSAGE' or 'Node2Vec'
+model_name = args.modelName            # 'NeuralNet_hyper' or 'RandomForest_randomized' or 'RandomForest_grid' or 'NeuralNet' or 'Linear' or 'Ridge' or 'SVM'
+predicting_speciality = args.case      # 2, 3
 print('Arguments:', args)
-# python main.py --dataset=Alzheimer
+# python main.py --dataset=Alzheimer --emb=GCN --modelName=NeuralNet_hyper --case=2
+# python main.py --dataset=Alzheimer --emb=GCN --modelName=NeuralNet_hyper --case=3
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-embedding = 'GCN'           # 'GCN' or 'Attri2Vec' or 'GraphSAGE' or 'Node2Vec'
-model_name = 'Linear'       # 'RandomForest_randomized' or 'RandomForest_grid' or 'NeuralNet' or 'NeuralNet_hyper' or 'Linear' or 'Ridge' or 'SVM'
-predicting_speciality = 2   # 1, 2, 3
-
-# data_name = 'Alzheimer' 
-# model_name = 'RandomForest_randomized' or 'RandomForest_grid' or 'NeuralNet' or 'NeuralNet_hyper'
 # predicting_attribute = 'pval' or 'chromosome' or 'jaccard_similarity' 
-# embedding = 'GCN' or 'Node2Vec' or 'Attri2Vec' or 'GraphSAGE'
 scores = do_category_specific_task_prediction(data_name, model_name, 42, embedding, predicting_speciality) 
 
 e_dict = dict()
